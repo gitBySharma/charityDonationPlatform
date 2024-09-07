@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charity Connect</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
+</head>
+
+<body>
+    <header class="header">
+        <div class="container d-flex align-items-center justify-content-between">
+            <div class="logo d-flex align-items-center">
+                <i class="icon fas fa-hand-holding-heart"></i>
+                <h1>CharityConnect</h1>
+            </div>
+            <nav class="navbar">
+                <ul class="nav">
+                    <li class="nav-item"><a class="nav-link" id="admin" href="#" data-bs-toggle="modal"
+                            data-bs-target="#adminLoginModal">Admin</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h2>Empowering Change Through Generosity</h2>
+                    <p>Join our platform to make a difference in the world. Connect with causes you care about and start
+                        your journey of giving today.</p>
+                    <div class="d-flex">
+                        <a href="#join-community" class="btn custom-btn me-3">Get Started</a>
+                        <a href="#how-it-works" class="btn btn-outline-custom">Learn More</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <img src="img/charity.jpg" alt="Charity illustration" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section id="join-community" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Join Our Community</h2>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="card-title"><i class="fas fa-user me-2"></i>For Donors</h3>
+                            <p class="card-text">Discover meaningful causes and make a lasting impact with your
+                                generosity.</p>
+                            <a href="#" class="btn custom-btn" data-bs-toggle="modal"
+                                data-bs-target="#donorModal">Register as Donor</a>
+                            <a href="#" class="btn btn-outline-custom mt-2" data-bs-toggle="modal"
+                                data-bs-target="#donorLoginModal">Login</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="card-title"><i class="fas fa-building me-2"></i>For Organizations</h3>
+                            <p class="card-text">Create campaigns, connect with donors, and amplify your charitable
+                                impact.</p>
+                            <a href="#" class="btn custom-btn" data-bs-toggle="modal"
+                                data-bs-target="#orgModal">Register as Organization</a>
+                            <a href="#" class="btn btn-outline-custom mt-2" data-bs-toggle="modal"
+                                data-bs-target="#orgLoginModal">Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">How It Works</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-user-plus fa-3x mb-3" style="color: var(--accent-color);"></i>
+                            <h3 class="card-title">1. Create an Account</h3>
+                            <p class="card-text">Sign up as a donor or register your charity organization to get
+                                started.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-search fa-3x mb-3" style="color: var(--accent-color);"></i>
+                            <h3 class="card-title">2. Explore Campaigns</h3>
+                            <p class="card-text">Browse through various campaigns or create your own if you're an
+                                organization.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-hand-holding-heart fa-3x mb-3" style="color: var(--accent-color);"></i>
+                            <h3 class="card-title">3. Make a Difference</h3>
+                            <p class="card-text">Donate to causes you care about or manage your campaign's progress.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Donor Registration Modal -->
+    <div class="modal fade" id="donorModal" tabindex="-1" aria-labelledby="donorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="donorModalLabel">Register as Donor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Donor Registration Form -->
+                    <form id="donorSignupForm">
+                        <div class="mb-3">
+                            <label for="donorName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="donorName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="donorEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="donorEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="donorPhone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="donorPhone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="donorPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="donorPassword" required>
+                            <small id="passwordHelp1" class="form-text text-muted">
+                                Minimum 8 characters long and must contain at least one number.
+                            </small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmDonorPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmDonorPassword" required>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" id="donorSignupBtn" class="btn custom-btn">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donor Login Modal -->
+    <div class="modal fade" id="donorLoginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Login to start using Charity Connect</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Login Form -->
+                    <form id="donorLoginForm">
+                        <div class="mb-2">
+                            <label for="donorLoginEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="donorLoginEmail" placeholder="Enter your email"
+                                required>
+                        </div>
+                        <div class="mb-2">
+                            <label for="donorLoginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="donorLoginPassword"
+                                placeholder="Enter password" required>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <button type="submit" id="donorLoginBtn" class="btn custom-btn">Login</button>
+                            <a href="forgotPassword.html" id="forgotPasswordLink">Forgot Password?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Organization Registration Modal -->
+    <div class="modal fade" id="orgModal" tabindex="-1" aria-labelledby="orgModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orgModalLabel">Register as Organization</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Organization Registration Form -->
+                    <form id="orgSignupForm">
+                        <div class="mb-2">
+                            <label for="orgName" class="form-label">Organization Name</label>
+                            <input type="text" class="form-control" id="orgName" required>
+                        </div>
+                        <div class="mb-2">
+                            <label for="orgEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="orgEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="orgPhone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="orgPhone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="chooseCategory" class="form-label"> Choose a Category </label>
+                            <select class="chooseCategory form-select" required>
+                                <option value="Medical">Medical</option>
+                                <option value="Children">Children</option>
+                                <option value="Elderly">Elderly</option>
+                                <option value="Education">Education</option>
+                                <option value="Disaster-Relief">Disaster-Relief</option>
+                                <option value="Specially-Abled">Specially-Abled</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <input type="text" class="form-control" id="description"
+                                placeholder="Enter a short description" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="goal" class="form-label">Goal</label>
+                            <input type="text" class="form-control" id="goal" placeholder="Enter your goal and mission"
+                                required>
+                        </div>
+                        <div class="mb-2">
+                            <label for="orgPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="orgPassword" required>
+                            <small id="passwordHelp2" class="form-text text-muted">
+                                Minimum 8 characters long and must contain at least one number.
+                            </small>
+                        </div>
+                        <div class="mb-2">
+                            <label for="confirmOrgPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmOrgPassword" required>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" id="orgSignupBtn" class="btn custom-btn">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Organization Login Modal -->
+    <div class="modal fade" id="orgLoginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orgLoginModalHeading">Login to start using Charity Connect</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Login Form -->
+                    <form id="orgLoginForm">
+                        <div class="mb-2">
+                            <label for="orgLoginEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="orgLoginEmail" placeholder="Enter your email"
+                                required>
+                        </div>
+                        <div class="mb-2">
+                            <label for="orgLoginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="orgLoginPassword"
+                                placeholder="Enter password" required>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <button type="submit" id="orgLoginBtn" class="btn custom-btn">Login</button>
+                            <a href="forgotPassword.html" id="forgotPasswordLink">Forgot Password?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Signup Modal -->
+    <div class="modal fade" id="adminSignupModal" tabindex="-1" aria-labelledby="adminModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="adminSignupHeading">Register as Admin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Admin Registration Form -->
+                    <form id="adminSignupForm">
+                        <div class="mb-3">
+                            <label for="adminSignupName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="adminSignupName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="adminSignupEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="adminSignupEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="adminKey" class="form-label">Admin Key</label>
+                            <input type="text" class="form-control" id="adminKey" pattern="[A-Za-z0-9]+"
+                                title="Only letters and numbers are allowed"
+                                placeholder="Enter the alphanumeric Admin Key" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="adminSignupPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="adminSignupPassword" required>
+                            <small id="passwordHelp3" class="form-text text-muted">
+                                Minimum 8 characters long and must contain at least one number.
+                            </small>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <button type="submit" id="adminSignupBtn" class="btn custom-btn">Register</button>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#adminLoginModal">Already an admin?
+                                Login</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="adminLoginHeading">Login as Admin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Login Form -->
+                    <form id="adminLoginForm">
+                        <div class="mb-2">
+                            <label for="adminLoginEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="adminLoginEmail" placeholder="Enter your email"
+                                required>
+                        </div>
+                        <div class="mb-2">
+                            <label for="adminLoginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="adminLoginPassword"
+                                placeholder="Enter password" required>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <button type="submit" id="adminLoginBtn" class="btn custom-btn">Login</button>
+                            <div class="admin-login-links">
+                                <a href="forgotPassword.html" id="adminforgotPasswordLink">Forgot Password?</a>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#adminSignupModal">Register as admin</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="py-4 bg-dark text-white">
+        <div class="container text-center">
+            <p>&copy; 2024 CharityConnect. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+    <script src="homePage.js"></script>
+</body>
+
+</html>
