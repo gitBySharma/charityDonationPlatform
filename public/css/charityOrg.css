@@ -50,7 +50,7 @@ h1, h2, h3 {
     padding: 45px 0 45px 0;
 }
 
-.hero h2 {
+.hero h3 {
     margin: 0;
     font-size: 36px;
     font-weight: 500;
@@ -119,18 +119,17 @@ h1, h2, h3 {
     background-color: var(--surface-color);
     padding: 20px 0;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin-bottom: 30px; /* Space between welcome section and main content */
 }
 
-.welcome-section h3 {
+/* .welcome-section h2 {
     color: var(--heading-color);
     font-size: 24px;
     font-weight: 500;
-}
+} */
 
 @media (max-width: 768px) {
-    .welcome-section h3 {
+    .welcome-section h2 {
         font-size: 20px;
     }
 }

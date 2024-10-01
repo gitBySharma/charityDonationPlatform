@@ -7,9 +7,11 @@ const sequelize = require('./util/database.js');
 
 const DonorUser = require("./models/donorUser.js");
 const CharityOrgUser = require("./models/charityOrgUser.js");
+const Admin = require("./models/admin.js");
 
 const donorUserRoutes = require('./routes/donorUser.js');
 const charityOrgUserRoutes = require('./routes/charityOrgUser.js');
+const adminRoutes = require("./routes/admin.js");
 
 const app = express();
 
@@ -28,6 +30,7 @@ app.get('/', (req, res, next) => {
 
 app.use(donorUserRoutes);
 app.use(charityOrgUserRoutes);
+app.use(adminRoutes);
 
 
 sequelize.sync().

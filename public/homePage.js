@@ -36,8 +36,8 @@ donorSignupForm.addEventListener('submit', async (event) => {
             donorSignupPassword.value = '';
             donorSignupConfirmPassword.value = '';
 
-            const post = await axios.post('/donor/signup', donorData);
-            if (post) {
+            try {
+                const post = await axios.post('/donor/signup', donorData);
                 alert("Signed up successfully, Login to get started");
                 //hide sign-up modal
                 const donorModal = bootstrap.Modal.getInstance(document.getElementById('donorModal'));
@@ -55,9 +55,11 @@ donorSignupForm.addEventListener('submit', async (event) => {
                 donorSignupPassword.value = '';
                 donorSignupConfirmPassword.value = '';
 
-            } else {
-                alert("Failed to sign up" + post.data.error);
+            } catch (error) {
+                alert(error.response.data.error);
+                console.error(error);
             }
+
 
         } else {
             passwordHelp1.textContent = "Enter valid password";
@@ -130,8 +132,8 @@ orgSignupForm.addEventListener('submit', async (event) => {
             orgSignupPassword.value = '';
             orgSignupConfirmPassword.value = '';
 
-            const post = await axios.post('/organization/signup', orgData);
-            if (post) {
+            try {
+                const post = await axios.post('/organization/signup', orgData);
                 alert("Signed up successfully, Login to get started");
                 //hide sign-up modal
                 const orgModal = bootstrap.Modal.getInstance(document.getElementById('orgModal'));
@@ -151,9 +153,11 @@ orgSignupForm.addEventListener('submit', async (event) => {
                 orgSignupPassword.value = '';
                 orgSignupConfirmPassword.value = '';
 
-            } else {
-                alert("Failed to sign up" + post.data.error);
+            } catch (error) {
+                alert(error.response.data.error);
+                console.log(error.response.data.error);
             }
+
 
         } else {
             passwordHelp2.textContent = "Enter valid password";
@@ -232,7 +236,7 @@ orgLoginForm.addEventListener('submit', async (event) => {
         .then((result) => {
             alert("Logged in successfully");
             localStorage.setItem('token', result.data.token);
-            window.location.href = "#";
+            window.location.href = "charityOrg.html";
 
         }).catch((err) => {
             console.log(err);
@@ -245,7 +249,112 @@ orgLoginForm.addEventListener('submit', async (event) => {
 
 
 
-//admin signup and login
+
+//admin signup
+const adminSignupForm = document.getElementById("adminSignupForm");
+const adminSignupName = document.getElementById("adminSignupName");
+const adminSignupEmail = document.getElementById("adminSignupEmail");
+const adminSignupPassword = document.getElementById("adminSignupPassword");
+const adminKey = document.getElementById("adminKey");
+const adminSignupBtn = document.getElementById("adminSignupBtn");
+const passwordHelp3 = document.getElementById("passwordHelp3");
+
+adminSignupBtn.disabled = true;
+
+adminSignupForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    try {
+        const isValidPassword = validatePassword(adminSignupPassword.value);
+
+        if (isValidPassword) {
+            const adminData = {
+                name: adminSignupName.value,
+                email: adminSignupEmail.value,
+                adminKey: adminKey.value,
+                password: adminSignupPassword.value
+            }
+
+            //clearing input fields
+            adminSignupName.value = '';
+            adminSignupEmail.value = '';
+            adminKey.value = '';
+            adminSignupPassword.value = '';
+
+            try {
+                const post = await axios.post('/admin/signup', adminData);
+                alert("Signed up successfully, Login to get started");
+                //hide sign-up modal
+                const adminSignupModal = bootstrap.Modal.getInstance(document.getElementById('adminSignupModal'));
+                adminSignupModal.hide();
+
+                //clearing input fields
+                adminSignupName.value = '';
+                adminSignupEmail.value = '';
+                adminKey.value = '';
+                adminSignupPassword.value = '';
+
+            } catch (error) {
+                alert(error.response.data.error);
+                console.log(error.response.data.error);
+            }
+
+        } else {
+            passwordHelp3.textContent = "Enter valid password";
+            adminSignupBtn.disabled = true;
+        }
+
+    } catch (error) {
+        console.error(error);
+    }
+});
+
+
+adminSignupPassword.addEventListener('keyup', () => {
+    const isValidPassword = validatePassword(adminSignupPassword.value);
+    if (isValidPassword) {
+        passwordHelp3.textContent = "";
+        adminSignupBtn.disabled = false;
+
+    } else {
+        passwordHelp3.textContent = "Enter valid password";
+        adminSignupBtn.disabled = true;
+    }
+});
+
+
+//admin login
+const adminLoginForm = document.getElementById("adminLoginForm");
+const adminLoginEmail = document.getElementById("adminLoginEmail");
+const adminLoginPassword = document.getElementById("adminLoginPassword");
+const adminLoginBtn = document.getElementById("adminLoginBtn");
+
+adminLoginForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const adminData = {
+        email: adminLoginEmail.value,
+        password: adminLoginPassword.value
+    }
+
+    adminLoginEmail.value = '';
+    adminLoginPassword.value = '';
+
+    axios.post('/admin/login', adminData)
+        .then((result) => {
+            alert("Logged in successfully");
+            localStorage.setItem('token', result.data.token);
+            window.location.href = "#";
+
+        }).catch((err) => {
+            console.log(err);
+            if (err.response.data.error) {
+                alert(err.response.data.error);
+            }
+        });
+
+});
+
 
 
 
