@@ -1,9 +1,13 @@
 const welcomeMsgUser = document.getElementById("userName");
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", (event) => {
+    event.preventDefault();
+
     const token = localStorage.getItem("token");
     const decodedToken = jwt_decode(token);
     welcomeMsgUser.innerText = decodedToken.name;
+
+    fetchApprovedCampaigns();
 });
 
 
@@ -25,8 +29,9 @@ const campaignImage = document.getElementById("campaignImage");
 const campaignStartDate = document.getElementById("startDate");
 const campaignEndDate = document.getElementById("endDate");
 
-campaignForm.addEventListener("submit", (event) => {
+campaignForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    const token = localStorage.getItem("token");
 
     const formData = new FormData();
     formData.append("campaignName", campaignName.value);
@@ -38,13 +43,46 @@ campaignForm.addEventListener("submit", (event) => {
     formData.append("campaignEndDate", campaignEndDate.value);
 
     for (const file of campaignImage.files) {
-        formData.append("campaignImage", file);
+        formData.append("file", file);
     }
 
-    // for(const [key, value] of formData.entries()){
-    //     console.log(key, value);
-    // }
+    const response = await axios.post('/campaign/register', formData, { headers: { 'Authorization': token } });
 
-    alert("Your campaign is registered, will be available in 24 hrs after admin approval. For any queries contact charityConnect");
-    campaignForm.reset();
+    if (response.data.success) {
+        alert("Your campaign is registered, will be available in 24 hrs after admin approval. For any queries contact charityConnect");
+        campaignForm.reset();
+
+    } else {
+        alert("Failed to register campaign");
+    }
+
 });
+
+
+async function fetchApprovedCampaigns() {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await axios.get('/campaign/approved', { headers: { "Authorization": token } });
+        const campaigns = response.data.campaigns;
+
+        const campaignsList = document.getElementById('campaignsList');
+        campaignsList.innerHTML = ''; // Clear existing campaigns
+
+        campaigns.forEach(campaign => {
+            const campaignCard = `
+                <div class="card mb-3">
+                    <img src="img/charity.jpg" class="card-img-top" alt="Campaign Image">
+                    <div class="card-body">
+                        <h5 class="card-title">${campaign.campaignName}</h5>
+                        <p class="card-text">${campaign.campaignDescription}</p>
+                        <p class="card-text">Fund Raised: ₹ ${campaign.fundRaised} / ₹ ${campaign.campaignGoal}</p>
+                    </div>
+                </div>
+            `;
+            campaignsList.innerHTML += campaignCard;
+        });
+    } catch (error) {
+        console.error('Error fetching approved campaigns:', error);
+        alert("Error fetching campaigns");
+    }
+};
