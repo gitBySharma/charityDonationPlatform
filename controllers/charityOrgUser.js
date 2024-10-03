@@ -66,3 +66,84 @@ exports.charityOrgUserLogin = async (req, res, next) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 }
+
+
+
+exports.getProfileDetails = async (req, res, next) => {
+    try {
+        const user = await CharityOrgUser.findOne({ where: { id: req.user.id } });
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found", success: false });
+
+        } else {
+            return res.status(200).json({ message: "User profile details fetched", orgProfileData: user, success: true });
+        }
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: "Internal server error" });
+
+    }
+};
+
+
+
+exports.editProfile = async (req, res, next) => {
+    const { name, email, phone, category, description, goal } = req.body;
+
+    try {
+        const user = await CharityOrgUser.findOne({ where: { id: req.user.id } });
+        if (!user) {
+            return res.status(404).json({ error: "User not found", success: false });
+
+        } else {
+            user.name = name;
+            user.email = email;
+            user.phone = phone;
+            user.category = category;
+            user.description = description;
+            user.goal = goal;
+
+            await user.save();
+
+            return res.status(200).json({ message: "Profile updated successfully", success: true });
+        }
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: "Internal server error", success: false });
+
+    }
+};
+
+
+
+exports.changePassword = async (req, res, next) => {
+    const { currentPassword, newPassword } = req.body;
+
+    try {
+        const user = await CharityOrgUser.findOne({ where: { id: req.user.id } });
+        if (!user) {
+            return res.status(404).json({ error: "User not found", success: false });
+
+        } else {
+            const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+
+            if (!isValidPassword) {
+                return res.status(401).json({ error: "Invalid current password", success: false });
+
+            } else {
+                const hashedPassword = await bcrypt.hash(newPassword, 10);
+                user.password = hashedPassword;
+                await user.save();
+                return res.status(200).json({ message: "Password changed successfully", success: true });
+
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: "Internal server error", success: false });
+
+    }
+};

@@ -6,6 +6,8 @@ const uploadToS3 = require("../util/aws.js");
 
 const Sequelize = require('sequelize');
 
+
+
 exports.registerCharity = async (req, res, next) => {
     const { campaignName, campaignCategory, campaignDescription,
         campaignLocation, campaignGoal, campaignStartDate, campaignEndDate } = req.body;

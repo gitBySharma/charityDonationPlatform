@@ -19,7 +19,7 @@
             </div>
             <nav class="navbar">
                 <ul class="nav">
-                    <li class="nav-item"><a class="nav-link" href="#" id="profile">Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="charityOrgProfile.html" id="profile">Profile</a></li>
                     <li class="nav-item"><a class="nav-link" href="#" id="logoutBtn">Logout</a></li>
                 </ul>
             </nav>
@@ -47,7 +47,7 @@
                                 required>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label for="campaignCategory" class="form-label">Category</label>
                             <select class="form-select" id="campaignCategory" required>
                                 <option value="Medical">Medical</option>
@@ -58,6 +58,7 @@
                                 <option value="Specially-abled">Specially-abled</option>
                                 <option value="Others">Others</option>
                             </select>
+                            <small class="form-text text-muted">*If others, specify in description* </small>
                         </div>
 
                         <div class="mb-3">
@@ -81,6 +82,7 @@
                         <div class="mb-4">
                             <label for="campaignImage" class="form-label">Upload Required Documents</label>
                             <input type="file" name="file" class="form-control" id="campaignImage" required multiple>
+                            <small class="form-text text-muted">*only pdf format, max size 2mb per doc* </small> <br>
                             <small class="form-text text-muted">*Refer to required docs section in homepage* </small>
                         </div>
 
