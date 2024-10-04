@@ -46,11 +46,12 @@ campaignForm.addEventListener("submit", async (event) => {
         formData.append("file", file);
     }
 
+    campaignForm.reset();  //reset the form to avoid multiple request
+
     const response = await axios.post('/campaign/register', formData, { headers: { 'Authorization': token } });
 
     if (response.data.success) {
         alert("Your campaign is registered, will be available in 24 hrs after admin approval. For any queries contact charityConnect");
-        campaignForm.reset();
 
     } else {
         alert("Failed to register campaign");
@@ -71,11 +72,12 @@ async function fetchApprovedCampaigns() {
         campaigns.forEach(campaign => {
             const campaignCard = `
                 <div class="card mb-3">
-                    <img src="img/charity.jpg" class="card-img-top" alt="Campaign Image">
+                    <img src="img/charity4.jpg" class="card-img-top" alt="Campaign Image">
                     <div class="card-body">
                         <h5 class="card-title">${campaign.campaignName}</h5>
                         <p class="card-text">${campaign.campaignDescription}</p>
-                        <p class="card-text">Fund Raised: ₹ ${campaign.fundRaised} / ₹ ${campaign.campaignGoal}</p>
+                        <h6 class="card-text"><strong>Fund Raised:</strong> ₹ ${campaign.fundRaised} / ₹ ${campaign.campaignGoal}</h6>
+                        <p class="card-text"><strong>Available Till: </strong> ${campaign.campaignEndDate.slice(0, 10)} </p>
                     </div>
                 </div>
             `;

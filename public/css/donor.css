@@ -13,7 +13,9 @@ body {
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     color: var(--heading-color);
 }
 
@@ -64,69 +66,37 @@ h1, h2, h3 {
     font-weight: 400;
 }
 
-.custom-btn {
+.btn-primary {
     background-color: #5D7BB8;
-    border-color: #5D7BB8;
-    color: #fff;
-    transition: all 0.3s ease;
-    padding: 10px 20px;
-    font-size: 16px;
+    border: none;
+    transition: background-color 0.3s ease;
 }
 
-.custom-btn:hover {
+.btn-primary:hover {
     background-color: #bbd0f0;
     border-color: #5D7BB8;
     color: #fff;
 }
 
-.btn-outline-custom {
-    color: #5D7BB8;
-    border-color: #5D7BB8;
-    padding: 10px 20px;
-    font-size: 16px;
-}
-
-.btn-outline-custom:hover {
-    background-color: #5D7BB8;
-    color: white;
-}
-
 .card {
-    border: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
 }
 
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.card-img-top {
-    width: 450px; /* Adjust width as necessary */
-    height: auto; /* Maintain aspect ratio */
-    object-fit: cover; /* Ensure the image covers the area */
-    margin: 0 auto; /* Center the image */
-}
-
-.btn {
-    margin-top: 7px; /* Ensures space between buttons */
-}
-
-.admin-login-links {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem; /* Adjust spacing as needed */
+.card img {
+    height: 200px;
+    object-fit: cover;
 }
 
 .welcome-section {
     background-color: var(--surface-color);
     padding: 20px 0;
     border-radius: 8px;
-    margin-bottom: 30px; /* Space between welcome section and main content */
+    margin-bottom: 30px;
 }
 
 /* .welcome-section h2 {

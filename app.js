@@ -9,11 +9,13 @@ const DonorUser = require("./models/donorUser.js");
 const CharityOrgUser = require("./models/charityOrgUser.js");
 const Admin = require("./models/admin.js");
 const CharityCampaign = require("./models/charityCampaign.js");
+const Donations = require("./models/donations.js");
 
 const donorUserRoutes = require('./routes/donorUser.js');
 const charityOrgUserRoutes = require('./routes/charityOrgUser.js');
 const adminRoutes = require("./routes/admin.js");
 const charityCampaignRoutes = require("./routes/charityCampaign.js");
+const donorRoutes = require("./routes/donors.js");
 
 const app = express();
 
@@ -34,10 +36,17 @@ app.use(donorUserRoutes);
 app.use(charityOrgUserRoutes);
 app.use(adminRoutes);
 app.use(charityCampaignRoutes);
+app.use(donorRoutes);
 
 
 CharityOrgUser.hasMany(CharityCampaign);
 CharityCampaign.belongsTo(CharityOrgUser);
+
+CharityCampaign.hasMany(Donations);
+Donations.belongsTo(CharityCampaign);
+
+DonorUser.hasMany(Donations);
+Donations.belongsTo(DonorUser);
 
 
 sequelize.sync().

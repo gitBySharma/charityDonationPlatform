@@ -19,7 +19,7 @@ const Campaign = sequelize.define('campaign', {
         allowNull: false,
     },
     campaignDescription: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false
     },
     campaignLocation: {
