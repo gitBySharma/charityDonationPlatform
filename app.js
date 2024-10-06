@@ -10,6 +10,7 @@ const CharityOrgUser = require("./models/charityOrgUser.js");
 const Admin = require("./models/admin.js");
 const CharityCampaign = require("./models/charityCampaign.js");
 const Donations = require("./models/donations.js");
+const Transactions = require("./models/transactions.js");
 
 const donorUserRoutes = require('./routes/donorUser.js');
 const charityOrgUserRoutes = require('./routes/charityOrgUser.js');
@@ -47,6 +48,12 @@ Donations.belongsTo(CharityCampaign);
 
 DonorUser.hasMany(Donations);
 Donations.belongsTo(DonorUser);
+
+DonorUser.hasMany(Transactions);
+Transactions.belongsTo(DonorUser);
+
+CharityCampaign.hasMany(Transactions);
+Transactions.belongsTo(CharityCampaign);
 
 
 sequelize.sync().

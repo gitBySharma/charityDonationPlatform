@@ -13,6 +13,10 @@ const Donation = sequelize.define('donations', {
     amount: {
         type: Sequelize.INTEGER,
         allowNull: false
+    },
+    paymentId: {
+        type: Sequelize.STRING,
+        allowNull: false
     }
 
 });
