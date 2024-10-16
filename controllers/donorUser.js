@@ -1,8 +1,13 @@
+require('dotenv').config();
+
 const DonorUser = require('../models/donorUser.js');
+const Donations = require('../models/donations.js');
+
 const bcrypt = require('bcrypt');
 
+const Campaign = require('../models/charityCampaign.js');
+
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
 
 
 exports.donorUserSignup = async (req, res, next) => {
@@ -38,7 +43,6 @@ function generateAccessToken(id, name) {
 }
 
 
-
 exports.donorUserLogin = async (req, res, next) => {
     const { email, password } = req.body;
     try {
@@ -63,3 +67,131 @@ exports.donorUserLogin = async (req, res, next) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 }
+
+
+
+exports.getProfileDetails = async (req, res, next) => {
+    try {
+        const user = await DonorUser.findOne({ where: { id: req.user.id } });
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found", success: false });
+
+        } else {
+            const totalDonation = await Donations.sum('amount', {
+                where: {
+                    donorUserId: req.user.id
+                }
+            });
+
+            const totalDonationAmount = totalDonation || 0;
+
+            return res.status(200).json({
+                message: "User profile details fetched",
+                data: user,
+                totalDonation: totalDonationAmount,
+                success: true
+            });
+        }
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: "Internal server error" });
+
+    }
+};
+
+
+
+exports.editProfile = async (req, res, next) => {
+    const { name, email, phone } = req.body;
+
+    try {
+        const user = await DonorUser.findOne({ where: { id: req.user.id } });
+        if (!user) {
+            return res.status(404).json({ error: "User not found", success: false });
+
+        } else {
+            user.name = name;
+            user.email = email;
+            user.phone = phone;
+
+            await user.save();
+
+            return res.status(200).json({ message: "Profile updated successfully", success: true });
+        }
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: "Internal server error", success: false });
+
+    }
+};
+
+
+
+exports.changePassword = async (req, res, next) => {
+    const { currentPassword, newPassword } = req.body;
+
+    try {
+        const user = await DonorUser.findOne({ where: { id: req.user.id } });
+        if (!user) {
+            return res.status(404).json({ error: "User not found", success: false });
+
+        } else {
+            const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+
+            if (!isValidPassword) {
+                return res.status(401).json({ error: "Invalid current password", success: false });
+
+            } else {
+                const hashedPassword = await bcrypt.hash(newPassword, 10);
+                user.password = hashedPassword;
+                await user.save();
+                return res.status(200).json({ message: "Password changed successfully", success: true });
+
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: "Internal server error", success: false });
+
+    }
+};
+
+
+
+exports.getDonationDetails = async (req, res, next) => {
+    try {
+        const user = await DonorUser.findOne({ where: { id: req.user.id } });
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found", success: false });
+
+        }
+
+        const donations = await Donations.findAll({
+            where: { donorUserId: req.user.id },
+            include: [{
+                model: Campaign,
+                attributes: ['campaignName', 'campaignLocation']
+            }]
+        });
+
+        const donationDetails = donations.map(donation => {
+            return {
+                campaignName: donation.Campaign.campaignName,
+                campaignLocation: donation.Campaign.campaignLocation,
+                donationAmount: donation.amount,
+                donationDate: donation.createdAt
+            };
+        });
+
+        res.status(200).json({ message: "Donation details fetched successfully", data: donationDetails, success: true });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: "Internal server error", success: false });
+
+    }
+};
