@@ -55,7 +55,10 @@
                 </select>
             </div>
             <div class="col-md-4">
-                <input type="text" class="form-control" id="searchCampaign" placeholder="Search Campaigns...">
+                <div class="input-group"> <!-- Added this div -->
+                    <input type="text" class="form-control" id="searchCampaign" placeholder="Search Campaigns...">
+                    <button type="button" class="btn btn-primary" id="searchBtn">Search</button>
+                </div>
             </div>
         </div>
 
@@ -63,7 +66,7 @@
         <div id="campaignsList" class="row">
             <!-- Example Campaign Card -->
             <div class="col-md-4 mb-4">
-                <div class="card">
+                <!-- <div class="card">
                     <img src="img/charity.jpg" class="card-img-top" alt="Campaign Image">
                     <div class="card-body">
                         <h5 class="card-title">Campaign Name</h5>
@@ -72,7 +75,7 @@
                         <button class="btn btn-primary w-100" data-bs-toggle="modal"
                             data-bs-target="#donateModal" id="donateNowBtn">Donate Now</button>
                     </div>
-                </div>
+                </div> -->
             </div>
             <!-- More campaigns loaded dynamically -->
         </div>
@@ -96,6 +99,11 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div id="paginationControls" class="d-flex justify-content-center my-4">
+        <!-- Pagination buttons will be dynamically inserted here -->
     </div>
 
     <footer class="footer bg-light py-3 mt-5">

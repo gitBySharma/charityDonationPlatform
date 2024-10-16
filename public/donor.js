@@ -20,13 +20,22 @@ logoutBtn.addEventListener('click', (event) => {
 
 
 
-async function fetchCampaigns() {
+async function fetchCampaigns(category = "", searchQuery = "", page = 1) {
     try {
         const token = localStorage.getItem("token");
-        const response = await axios.get('/donors/getCampaigns', { headers: { "Authorization": token } });
-        const campaigns = response.data.campaigns;
+        const response = await axios.get(`/donors/getCampaigns?category=${category}&searchQuery=${searchQuery}&page=${page}`, { headers: { "Authorization": token } });
+        const { campaigns, totalPages, currentPage } = response.data;
+
+
         const campaignsList = document.getElementById('campaignsList');
         campaignsList.innerHTML = ''; // Clear existing
+
+        if (campaigns.length === 0) {
+            // alert("No campaigns found for the selected category");
+            // window.location.reload();
+            campaignsList.innerHTML = '<p>No campaigns found for the selected filters.</p>';
+            return;
+        }
 
         campaigns.forEach(campaign => {
             const campaignCard = `
@@ -36,7 +45,7 @@ async function fetchCampaigns() {
                         <div class="card-body">
                             <h5 class="card-title">${campaign.campaignName}</h5>
                             <p class="card-text"><strong>Description: </strong>${campaign.campaignDescription}</p>
-                            <p class="card-text"><strong>Description: </strong>${campaign.campaignCategory}</p>
+                            <p class="card-text"><strong>Category: </strong>${campaign.campaignCategory}</p>
                             <p class="card-text"><strong>Location: </strong>${campaign.campaignLocation}</p>
                             <p class="card-text"><strong>Fund Raised: </strong> ₹ ${campaign.fundRaised} / ₹ ${campaign.campaignGoal}</p>
                             <p class="card-text"><strong>Available Till: </strong> ${campaign.campaignEndDate.slice(0, 10)} </p>
@@ -58,11 +67,56 @@ async function fetchCampaigns() {
             });
 
         });
+        // Display pagination
+        Pagination(totalPages, currentPage, category, searchQuery);
+
     } catch (error) {
         alert(error.response.data.error);
         console.error("Error fetching campaigns:", error);
     }
 };
+
+
+const categoryFilter = document.getElementById('campaignCategoryFilter');
+categoryFilter.addEventListener('change', (event) => {
+    const selectedCategory = event.target.value;
+    // Call fetchCampaigns with the selected category
+    fetchCampaigns(selectedCategory, searchInput.value.trim(), 1);
+});
+
+
+const searchBtn = document.getElementById('searchBtn');
+const searchInput = document.getElementById('searchCampaign');
+searchBtn.addEventListener('click', () => {
+    const searchQuery = searchInput.value.trim();
+    // Call fetchCampaigns with the search query and the current selected category
+    fetchCampaigns(categoryFilter.value, searchQuery, 1);
+});
+
+
+function Pagination(totalPages, currentPage, category, searchQuery) {
+    const paginationContainer = document.getElementById('paginationControls');
+    paginationContainer.innerHTML = '';  // Clear existing pagination
+
+    if (totalPages <= 1) {
+        return;
+    }
+
+    for (let i = 1; i <= totalPages; i++) {
+        const button = document.createElement('button');
+        button.innerText = i;
+        button.className = 'btn btn-outline-primary mx-1';
+        if (i === currentPage) {
+            button.classList.add('active');
+        }
+
+        button.addEventListener('click', () => {
+            fetchCampaigns(category, searchQuery, i);  // Fetch campaigns for the clicked page
+        });
+
+        paginationContainer.appendChild(button);
+    }
+}
 
 
 
@@ -97,14 +151,8 @@ document.getElementById('payBtn').addEventListener('click', async (event) => {
             if (response.razorpay_payment_id) {
                 alert("Donation successful");
                 document.getElementById("donationAmount").value = "";
-                //hide sign-up modal
-                const donateModal = bootstrap.Modal.getInstance(document.getElementById('donateModal'));
-                donateModal.hide();
+                window.location.reload();
             }
-
-            // alert("You are a premium user now");
-
-            // handlePremiumButton(true);  //updating the dashboard to show the premium message
         }
     };
 

@@ -18,8 +18,37 @@ exports.getCampaigns = async (req, res, next) => {
             return res.status(404).json({ message: "User not found", success: false });
         }
 
-        const campaigns = await Campaign.findAll({ where: { approved: true } });
-        res.json({ message: "Campaigns fetched successfully", campaigns: campaigns, success: true });
+        const { category, searchQuery, page = 1 } = req.query;
+        const limit = 6;
+        const offset = (page - 1) * limit;
+
+        let queryOptions = {
+            where: { approved: true },
+            limit: limit,
+            offset: offset
+        };
+
+        if (category) {
+            queryOptions.where.campaignCategory = category;
+        };
+
+        if (searchQuery) {
+            queryOptions.where[Sequelize.Op.or] = [
+                { campaignName: { [Sequelize.Op.like]: `%${searchQuery}%` } },
+                { campaignLocation: { [Sequelize.Op.like]: `%${searchQuery}%` } }
+            ];
+        };
+
+        const { count, rows: campaigns } = await Campaign.findAndCountAll(queryOptions);
+        const totalPages = Math.ceil(count / limit);
+
+        res.status(200).json({
+            message: "Campaigns fetched successfully",
+            campaigns: campaigns,
+            totalPages: totalPages,
+            currentPage: page,
+            success: true
+        });
 
     } catch (error) {
         console.log(error);
@@ -90,6 +119,12 @@ exports.updateTransactionStatus = async (req, res, next) => {
                     donorUserId: req.user.id,
                     campaignId: campaignId
                 });
+
+                const campaign = await Campaign.findByPk(campaignId);
+                if (campaign) {
+                    const currentFundRaised = campaign.fundRaised || 0; // default to 0 if null
+                    await campaign.update({ fundRaised: currentFundRaised + parseInt(donationAmount, 10) });
+                }
 
                 return res.status(201).json({ success: true, message: "Transaction successful" });
 
