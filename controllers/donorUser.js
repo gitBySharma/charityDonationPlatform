@@ -4,6 +4,7 @@ const DonorUser = require('../models/donorUser.js');
 const Donations = require('../models/donations.js');
 
 const bcrypt = require('bcrypt');
+const AWS = require("aws-sdk");
 
 const Campaign = require('../models/charityCampaign.js');
 
@@ -167,23 +168,25 @@ exports.getDonationDetails = async (req, res, next) => {
 
         if (!user) {
             return res.status(404).json({ error: "User not found", success: false });
-
         }
 
         const donations = await Donations.findAll({
-            where: { donorUserId: req.user.id },
+            where: { donorUserId: req.user.id }, // Fetch donations for the logged-in user
             include: [{
-                model: Campaign,
+                model: Campaign, // Include associated campaign details
                 attributes: ['campaignName', 'campaignLocation']
-            }]
+            }],
+            order: [['createdAt', 'DESC']],
+            limit: 15
         });
 
         const donationDetails = donations.map(donation => {
             return {
-                campaignName: donation.Campaign.campaignName,
-                campaignLocation: donation.Campaign.campaignLocation,
-                donationAmount: donation.amount,
-                donationDate: donation.createdAt
+                campaignName: donation.campaign.campaignName,
+                campaignLocation: donation.campaign.campaignLocation,
+                donationAmount: donation.amount, // Donation amount from the Donations table
+                donationDate: donation.createdAt, // Donation date
+                paymentId: donation.paymentId
             };
         });
 
@@ -192,6 +195,72 @@ exports.getDonationDetails = async (req, res, next) => {
     } catch (error) {
         console.log(error);
         return res.status(500).json({ error: "Internal server error", success: false });
+    }
+};
 
+
+
+async function uploadToS3(data, fileName) {
+    const s3bucket = new AWS.S3({
+        accessKeyId: process.env.IAM_USER_ACCESS_KEY,
+        secretAccessKey: process.env.IAM_USER_SECRET,
+        Bucket: "charityconnect"
+    });
+
+    var params = {
+        Bucket: "charityconnect",
+        Key: fileName,
+        Body: data,
+        ACL: "public-read"
+    }
+
+    try {
+        const response = await s3bucket.upload(params).promise();   //.promise() returns a promise
+        //console.log("Success", response);
+        return response.Location;
+
+    } catch (error) {
+        console.log("Error", error);
+
+    }
+};
+
+
+
+exports.downloadDonationReport = async (req, res, next) => {
+    try {
+        const user = await DonorUser.findOne({ where: { id: req.user.id } });
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found", success: false });
+        }
+
+        const donations = await Donations.findAll({
+            where: { donorUserId: req.user.id }, // Fetch donations for the logged-in user
+            include: [{
+                model: Campaign, // Include associated campaign details
+                attributes: ['campaignName', 'campaignLocation']
+            }],
+            order: [['createdAt', 'DESC']]
+        });
+
+        const donationDetails = donations.map(donation => {
+            return {
+                campaignName: donation.campaign.campaignName,
+                campaignLocation: donation.campaign.campaignLocation,
+                donationAmount: donation.amount, // Donation amount from the Donations table
+                donationDate: donation.createdAt, // Donation date
+                paymentId: donation.paymentId
+            };
+        });
+        const stringifiedDonations = JSON.stringify(donationDetails);
+        const fileName = `Donations${req.user.id}/${new Date().toISOString()}.txt`;
+        const fileUrl = await uploadToS3(stringifiedDonations, fileName);
+
+        res.status(201).json({ fileUrl, success: true });
+
+    } catch (error) {
+        console.log("Error", error);
+        res.status(500).json({ Error: "Something went wrong", success: false });
     }
 };

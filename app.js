@@ -43,8 +43,8 @@ app.use(donorRoutes);
 CharityOrgUser.hasMany(CharityCampaign);
 CharityCampaign.belongsTo(CharityOrgUser);
 
-CharityCampaign.hasMany(Donations);
-Donations.belongsTo(CharityCampaign);
+CharityCampaign.hasMany(Donations, { foreignKey: 'campaignId' });
+Donations.belongsTo(CharityCampaign, { foreignKey: 'campaignId' });
 
 DonorUser.hasMany(Donations);
 Donations.belongsTo(DonorUser);

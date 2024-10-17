@@ -192,6 +192,41 @@
                 </div>
             </div>
 
+            <!-- View Donations Modal -->
+            <div class="modal fade" id="viewDonationsModal" tabindex="-1" aria-labelledby="viewDonationsModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="viewDonationsModalLabel">Donation Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Campaign Name</th>
+                                            <th>Location</th>
+                                            <th>Donation Amount (₹)</th>
+                                            <th>Date</th>
+                                            <th>Payment ID</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="donationDetailsTable">
+                                        <!-- Donation details will be inserted here dynamically -->
+                                    </tbody>
+                                </table>
+                                <p>Last 15 donations max, for complete report click on download</p>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn custom-btn" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <div class="password-change-section">
                 <h4>Change Password</h4>

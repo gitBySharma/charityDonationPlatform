@@ -17,6 +17,8 @@ router.post('/donorProfile/changePassword/', authentication.authenticate, donorU
 
 router.get('/donor/viewDonations', authentication.authenticate, donorUserController.getDonationDetails);
 
+router.get('/donor/downLoad/donationReport', authentication.authenticate, donorUserController.downloadDonationReport);
+
 
 
 module.exports = router;

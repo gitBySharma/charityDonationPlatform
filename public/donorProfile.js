@@ -171,15 +171,63 @@ function validatePassword(password) {
 }
 
 
+const donationDetailsTable = document.getElementById("donationDetailsTable");
+
 viewDonation.addEventListener('click', async (event) => {
     event.preventDefault();
     const token = localStorage.getItem("token");
     try {
         const response = await axios.get('/donor/viewDonations', { headers: { "Authorization": token } });
-        console.log("donation data", response.data);
+        if (response.data.success) {
+            const donations = response.data.data;
 
+            // Clear previous table rows
+            donationDetailsTable.innerHTML = "";
+
+            // Iterate through the donations and add rows to the table
+            donations.forEach(donation => {
+                const donationRow = `
+                    <tr>
+                        <td>${donation.campaignName}</td>
+                        <td>${donation.campaignLocation}</td>
+                        <td>₹ ${donation.donationAmount}</td>
+                        <td>${new Date(donation.donationDate).toLocaleDateString()}</td>
+                        <td>${donation.paymentId}</td>
+                    </tr>`;
+                donationDetailsTable.insertAdjacentHTML('beforeend', donationRow);
+            });
+
+            // Show the modal with the donation details
+            const viewDonationsModal = new bootstrap.Modal(document.getElementById('viewDonationsModal'));
+            viewDonationsModal.show();
+
+        } else {
+            alert("Failed to fetch donation details");
+        }
     } catch (error) {
-        console.log("donation details error", error);
+        console.log("Donation details error:", error);
+        alert("Error fetching donation details");
     }
 });
 
+
+const downloadReport = document.getElementById("downloadReport");
+downloadReport.addEventListener('click', async (event) => {
+    event.preventDefault();
+    const token = localStorage.getItem("token");
+    try {
+        const response = await axios.get('/donor/downLoad/donationReport', { headers: { "Authorization": token } });
+        if (response.status === 201) {
+            let a = document.createElement("a");
+            a.href = response.data.fileUrl;
+            a.download = 'myDonationReport.txt';
+            a.click();
+
+        } else {
+            alert("Something went wrong  " + response.data.message);
+        }
+
+    } catch (error) {
+
+    }
+});
