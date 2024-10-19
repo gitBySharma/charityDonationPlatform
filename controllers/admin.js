@@ -1,4 +1,8 @@
 const Admin = require('../models/admin.js');
+const Campaign = require("../models/charityCampaign.js");
+const Donations = require("../models/donations.js");
+const CharityOrgUser = require("../models/charityOrgUser.js");
+
 const bcrypt = require('bcrypt');
 
 const jwt = require('jsonwebtoken');
@@ -66,3 +70,41 @@ exports.adminLogin = async (req, res, next) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 }
+
+
+
+exports.getUnapprovedCampaigns = async (req, res, next) => {
+    try {
+        const admin = await Admin.findOne({ where: { id: req.user.id } });
+        if (!admin) {
+            return res.status(401).json({ error: "Admin not found", success: false });
+        }
+
+        const campaigns = await Campaign.findAll({
+            where: { approved: false },
+            include: [{ model: CharityOrgUser, attributes: ['name'] }],
+            order: [['createdAt', 'ASC']]
+        });
+
+        const campaignDetails = campaigns.map(campaign => {
+            return {
+                id: campaign.id,
+                campaignName: campaign.campaignName,
+                campaignLocation: campaign.campaignLocation,
+                campaignCategory: campaign.campaignCategory,
+                campaignGoal: campaign.campaignGoal,
+                campaignDescription: campaign.campaignDescription,
+                uploadedDocumentUrl: campaign.campaignImage,
+                charityOrgName: campaign.charityOrgUser.name
+            }
+        });
+
+        res.status(200).json({ message: "Campaigns fetched successfully", campaignData: campaignDetails, success: true });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error", success: false });
+
+    }
+
+};

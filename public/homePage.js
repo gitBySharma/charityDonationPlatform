@@ -344,7 +344,7 @@ adminLoginForm.addEventListener('submit', async (event) => {
         .then((result) => {
             alert("Logged in successfully");
             localStorage.setItem('token', result.data.token);
-            window.location.href = "#";
+            window.location.href = "admin.html";
 
         }).catch((err) => {
             console.log(err);
