@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     const decodedToken = jwt_decode(token);
     welcomeMsgUser.innerText = decodedToken.name;
     fetchUnapprovedCampaigns();
+    fetchApprovedCampaigns();
 });
 
 
@@ -46,9 +47,9 @@ async function fetchUnapprovedCampaigns() {
             }
 
             const campaignCard = `
-                <div class="col-md-4"> <!-- Bootstrap column for responsiveness -->
-                    <div class="card h-100"> <!-- 'h-100' to make cards the same height -->
-                        <div class="card-body">
+                <div class="col-12"> <!-- Changed to full width for consistency -->
+                    <div class="card h-100"> <!-- Added h-100 for full height -->
+                        <div class="card-body d-flex flex-column"> <!-- Added flex properties -->
                             <h5 class="card-title">${campaign.campaignName}</h5>
                             <p class="card-text"><strong>Location: </strong>${campaign.campaignLocation}</p>
                             <p class="card-text"><strong>Category: </strong>${campaign.campaignCategory}</p>
@@ -56,8 +57,10 @@ async function fetchUnapprovedCampaigns() {
                             <p class="card-text"><strong>Description: </strong>${campaign.campaignDescription}</p>
                             <p class="card-text"><strong>Uploaded Documents:</strong><br>${documentLinks}</p>
                             <p class="card-text"><strong>Charity Org. Name: </strong>${campaign.charityOrgName}</p>
-                            <button class="btn btn-success" data-id="${campaign.id}">Approve</button>
-                            <button class="btn btn-danger" data-id="${campaign.id}">Reject</button>
+                            <div class="btn-group mt-auto"> <!-- Added btn-group and mt-auto -->
+                                <button class="btn btn-outline btn-success" data-id="${campaign.id}">Approve</button>
+                                <button class="btn btn-outline btn-danger" data-id="${campaign.id}">Reject</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -72,14 +75,20 @@ async function fetchUnapprovedCampaigns() {
         document.querySelectorAll('.btn-success').forEach(button => {
             button.addEventListener('click', async (event) => {
                 const campaignId = event.target.getAttribute('data-id');
-                // await handleCampaignApproval(campaignId, true);
+                await handleCampaignApproval(campaignId, true);
             });
         });
 
         document.querySelectorAll('.btn-danger').forEach(button => {
             button.addEventListener('click', async (event) => {
                 const campaignId = event.target.getAttribute('data-id');
-                // await handleCampaignApproval(campaignId, false);
+                const confirmed = window.confirm("Are you sure you want to reject the campaign?");
+                if (confirmed) {
+                    await handleCampaignApproval(campaignId, false);
+                } else {
+                    return;
+                }
+
             });
         });
 
@@ -88,9 +97,6 @@ async function fetchUnapprovedCampaigns() {
         alert("Failed to load unapproved campaigns.");
     }
 }
-
-
-
 
 
 async function handleCampaignApproval(campaignId, isApproved) {
@@ -104,5 +110,82 @@ async function handleCampaignApproval(campaignId, isApproved) {
     } catch (error) {
         console.error("Error during campaign approval/rejection:", error);
         alert("Action failed. Please try again.");
+    }
+}
+
+
+async function fetchApprovedCampaigns() {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get('/admin/getApprovedCampaigns', { headers: { "Authorization": token } });
+        const approvedCampaigns = response.data.campaignData;
+
+        const approvedCampaignsSection = document.getElementById('approvedCampaignsSection');
+        const sectionContainer = approvedCampaignsSection.querySelector('.section-container');
+        sectionContainer.innerHTML = ''; // Clear existing content
+
+        if (approvedCampaigns.length === 0) {
+            sectionContainer.innerHTML = '<p>No approved campaigns available.</p>';
+            return;
+        }
+
+        const rowDiv = document.createElement('div');
+        rowDiv.classList.add('row', 'g-3'); // Bootstrap row with gap between cards
+
+        approvedCampaigns.forEach(campaign => {
+            const campaignCard = `
+                <div class="col-12"> <!-- Full-width for each card -->
+                    <div class="card h-100"> <!-- h-100 for full height consistency -->
+                        <div class="card-body d-flex flex-column"> <!-- Flex for full card structure -->
+                            <h5 class="card-title">${campaign.campaignName}</h5>
+                            <p class="card-text"><strong>Location: </strong>${campaign.campaignLocation}</p>
+                            <p class="card-text"><strong>Category: </strong>${campaign.campaignCategory}</p>
+                            <p class="card-text"><strong>Goal: </strong>₹ ${campaign.campaignGoal}</p>
+                            <p class="card-text"><strong>Fund Raised: </strong>₹ ${campaign.fundRaised}</p>
+                            <p class="card-text"><strong>Charity Org. Name: </strong>${campaign.charityOrgName}</p>
+                            <div class="btn-group mt-auto"> <!-- Added btn-group and mt-auto for buttons -->
+                                <button class="btn btn-sm btn-outline-danger" data-id="${campaign.id}">Terminate Campaign</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            rowDiv.innerHTML += campaignCard; // Append each card to the row
+        });
+
+        sectionContainer.appendChild(rowDiv); // Append the row to the container
+
+        // Add event listeners for "Terminate Campaign" buttons
+        document.querySelectorAll('.btn-outline-danger').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const campaignId = event.target.getAttribute('data-id');
+                const confirmed = window.confirm("Are you sure you want to terminate the campaign?");
+                if (confirmed) {
+                    await handleCampaignTermination(campaignId);
+                } else {
+                    return;
+                }
+            });
+        });
+
+    } catch (error) {
+        console.log("Error fetching approved campaigns:", error);
+        alert("Failed to load approved campaigns.");
+    }
+}
+
+async function handleCampaignTermination(campaignId) {
+    try {
+        const token = localStorage.getItem("token");
+
+        await axios.post('/admin/terminateCampaign', { campaignId }, { headers: { "Authorization": token } });
+        alert("Campaign terminated successfully.");
+
+        fetchApprovedCampaigns(); // Reload approved campaigns after termination
+
+    } catch (error) {
+        console.log("Error terminating campaign:", error);
+        alert("Failed to terminate the campaign.");
     }
 }

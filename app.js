@@ -11,6 +11,7 @@ const Admin = require("./models/admin.js");
 const CharityCampaign = require("./models/charityCampaign.js");
 const Donations = require("./models/donations.js");
 const Transactions = require("./models/transactions.js");
+const ArchivedCampaign = require("./models/archivedCampaign.js");
 
 const donorUserRoutes = require('./routes/donorUser.js');
 const charityOrgUserRoutes = require('./routes/charityOrgUser.js');
@@ -42,6 +43,9 @@ app.use(donorRoutes);
 
 CharityOrgUser.hasMany(CharityCampaign);
 CharityCampaign.belongsTo(CharityOrgUser);
+
+CharityOrgUser.hasMany(ArchivedCampaign);
+ArchivedCampaign.belongsTo(CharityOrgUser);
 
 CharityCampaign.hasMany(Donations, { foreignKey: 'campaignId' });
 Donations.belongsTo(CharityCampaign, { foreignKey: 'campaignId' });

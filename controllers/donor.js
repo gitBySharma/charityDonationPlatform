@@ -23,7 +23,7 @@ exports.getCampaigns = async (req, res, next) => {
         const offset = (page - 1) * limit;
 
         let queryOptions = {
-            where: { approved: true },
+            where: { approved: true, active: true },
             limit: limit,
             offset: offset
         };

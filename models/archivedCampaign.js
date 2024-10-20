@@ -3,7 +3,7 @@ const Sequelize = require("sequelize");
 const sequelize = require("../util/database.js");
 const { type } = require("os");
 
-const Campaign = sequelize.define('campaign', {
+const archivedCampaign = sequelize.define('archivedCampaign', {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -47,11 +47,7 @@ const Campaign = sequelize.define('campaign', {
     approved: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
-    },
-    active: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: true
     }
 });
 
-module.exports = Campaign;
+module.exports = archivedCampaign;

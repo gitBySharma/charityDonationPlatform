@@ -41,7 +41,8 @@ exports.getApprovedCampaigns = async (req, res, next) => {
         const campaigns = await Campaign.findAll({
             where: {
                 charityOrgUserId: req.user.id,
-                approved: true
+                approved: true,
+                active: true
             }
         });
 

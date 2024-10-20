@@ -182,8 +182,8 @@ exports.getDonationDetails = async (req, res, next) => {
 
         const donationDetails = donations.map(donation => {
             return {
-                campaignName: donation.campaign.campaignName,
-                campaignLocation: donation.campaign.campaignLocation,
+                campaignName: donation.campaign.campaignName || "campaign terminated",
+                campaignLocation: donation.campaign.campaignLocation || "campaign terminated",
                 donationAmount: donation.amount, // Donation amount from the Donations table
                 donationDate: donation.createdAt, // Donation date
                 paymentId: donation.paymentId

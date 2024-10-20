@@ -2,11 +2,20 @@ const Admin = require('../models/admin.js');
 const Campaign = require("../models/charityCampaign.js");
 const Donations = require("../models/donations.js");
 const CharityOrgUser = require("../models/charityOrgUser.js");
+const ArchivedCampaign = require("../models/archivedCampaign.js");
 
 const bcrypt = require('bcrypt');
+const AWS = require("aws-sdk");
 
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+
+const s3bucket = new AWS.S3({
+    accessKeyId: process.env.IAM_USER_ACCESS_KEY,
+    secretAccessKey: process.env.IAM_USER_SECRET,
+    Bucket: "charityconnect"
+});
+
 
 
 exports.adminSignup = async (req, res, next) => {
@@ -81,7 +90,7 @@ exports.getUnapprovedCampaigns = async (req, res, next) => {
         }
 
         const campaigns = await Campaign.findAll({
-            where: { approved: false },
+            where: { approved: false, active: true },
             include: [{ model: CharityOrgUser, attributes: ['name'] }],
             order: [['createdAt', 'ASC']]
         });
@@ -107,4 +116,144 @@ exports.getUnapprovedCampaigns = async (req, res, next) => {
 
     }
 
+};
+
+
+
+exports.approveCampaign = async (req, res, next) => {
+    try {
+        const campaignId = req.body.campaignId;
+
+        const admin = await Admin.findOne({ where: { id: req.user.id } });
+        if (!admin) {
+            return res.status(401).json({ error: "Admin not found", success: false });
+
+        }
+        const campaign = await Campaign.findOne({ where: { id: campaignId } });
+        if (!campaign) {
+            return res.status(404).json({ error: "Campaign not found", success: false });
+
+        }
+        if (campaign.approved) {
+            return res.status(400).json({ error: "Campaign already approved", success: false });
+        }
+
+        campaign.approved = true;
+        await campaign.save();
+
+        res.status(200).json({ message: "Campaign approved successfully", success: true });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error", success: false });
+
+    }
+};
+
+
+
+exports.rejectCampaign = async (req, res, next) => {
+    try {
+        const campaignId = req.body.campaignId;
+
+        const admin = await Admin.findOne({ where: { id: req.user.id } });
+        if (!admin) {
+            return res.status(401).json({ error: "Admin not found", success: false });
+
+        }
+        const campaign = await Campaign.findOne({ where: { id: campaignId } });
+        if (!campaign) {
+            return res.status(404).json({ error: "Campaign not found", success: false });
+
+        }
+        if (campaign.approved) {
+            return res.status(400).json({ error: "Campaign already approved", success: false });
+
+        }
+
+        const params = {
+            Bucket: "charityconnect",
+            Key: JSON.stringify(campaign.campaignImage) // The key of the file in S3
+        };
+
+        // Delete the document from S3
+        await s3bucket.deleteObject(params).promise();
+
+        await Campaign.destroy({
+            where: {
+                id: campaignId
+            }
+        });
+
+        res.status(200).json({ message: "Campaign rejected successfully", success: true });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error", success: false });
+
+    }
+};
+
+
+exports.getApprovedCampaigns = async (req, res, next) => {
+    try {
+        const admin = await Admin.findOne({ where: { id: req.user.id } });
+        if (!admin) {
+            return res.status(401).json({ error: "Admin not found", success: false });
+        }
+
+        const campaigns = await Campaign.findAll({
+            where: { approved: true, active: true },
+            include: [{ model: CharityOrgUser, attributes: ['name'] }],
+            order: [['createdAt', 'ASC']]
+        });
+
+        const campaignDetails = campaigns.map(campaign => {
+            return {
+                id: campaign.id,
+                campaignName: campaign.campaignName,
+                campaignLocation: campaign.campaignLocation,
+                campaignCategory: campaign.campaignCategory,
+                campaignGoal: campaign.campaignGoal,
+                fundRaised: campaign.fundRaised,
+                charityOrgName: campaign.charityOrgUser.name
+            }
+        });
+
+        res.status(200).json({ message: "Campaigns fetched successfully", campaignData: campaignDetails, success: true });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error", success: false });
+
+    }
+};
+
+
+
+exports.terminateCampaign = async (req, res, next) => {
+    try {
+        const campaignId = req.body.campaignId;
+
+        const admin = await Admin.findOne({ where: { id: req.user.id } });
+        if (!admin) {
+            return res.status(401).json({ error: "Admin not found", success: false });
+
+        }
+        const campaign = await Campaign.findOne({ where: { id: campaignId } });
+        if (!campaign) {
+            return res.status(404).json({ error: "Campaign not found", success: false });
+
+        }
+
+        campaign.active = false;
+        campaign.approved = false;
+        campaign.save();
+
+        res.status(200).json({ message: "Campaign terminated and archived successfully", success: true });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error", success: false });
+    }
 };
