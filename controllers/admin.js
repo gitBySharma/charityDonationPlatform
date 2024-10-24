@@ -1,4 +1,5 @@
 const Admin = require('../models/admin.js');
+const DonorUser = require("../models/donorUser.js");
 const Campaign = require("../models/charityCampaign.js");
 const Donations = require("../models/donations.js");
 const CharityOrgUser = require("../models/charityOrgUser.js");
@@ -8,6 +9,7 @@ const bcrypt = require('bcrypt');
 const AWS = require("aws-sdk");
 
 const jwt = require('jsonwebtoken');
+const { where } = require('sequelize');
 require('dotenv').config();
 
 const s3bucket = new AWS.S3({
@@ -255,5 +257,84 @@ exports.terminateCampaign = async (req, res, next) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: "Internal server error", success: false });
+    }
+};
+
+
+
+exports.getDonorUsers = async (req, res, next) => {
+    try {
+        const donorUsers = await DonorUser.findAll();
+        if (!donorUsers) {
+            return res.status(404).json({ error: "No donor users found", success: false });
+
+        }
+        res.status(200).json({ message: "Donor users fetched successfully", donorUsers: donorUsers, success: true });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error", success: false });
+
+    }
+};
+
+
+
+exports.getCharityOrganizations = async (req, res, next) => {
+    try {
+        const charityOrganizations = await CharityOrgUser.findAll();
+        if (!charityOrganizations) {
+            return res.status(404).json({ error: "No charity organizations found", success: false });
+
+        }
+        res.status(200).json({ message: "Charity Organizations fetched successfully", charityOrganizations: charityOrganizations, success: true });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error", success: false });
+
+    }
+};
+
+
+
+exports.deleteDonorUser = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const donorUser = await DonorUser.findOne({ where: { id: userId } });
+        if (!donorUser) {
+            return res.status(404).json({ error: "Donor user not found", success: false });
+
+        }
+        await DonorUser.destroy({ where: { id: userId } });
+        res.status(200).json({ message: "Donor user deleted successfully", success: true });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error", success: false });
+
+    }
+};
+
+
+exports.deleteOrganization = async (req, res, next) => {
+    try {
+        const organizationId = req.params.organizationId;
+
+        const organization = await CharityOrgUser.findOne({ where: { id: organizationId } });
+        if (!organization) {
+            return res.status(404).json({ error: "Organization not found", success: false });
+
+        }
+
+        await Campaign.destroy({ where: { charityOrgUserId: organizationId } });
+        await CharityOrgUser.destroy({ where: { id: organizationId } });
+
+        res.status(200).json({ message: "Organization deleted successfully", success: true });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error", success: false });
+
     }
 };

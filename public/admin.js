@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     welcomeMsgUser.innerText = decodedToken.name;
     fetchUnapprovedCampaigns();
     fetchApprovedCampaigns();
+    fetchDonorUsers();
+    fetchCharityOrganizations();
 });
 
 
@@ -175,6 +177,7 @@ async function fetchApprovedCampaigns() {
     }
 }
 
+
 async function handleCampaignTermination(campaignId) {
     try {
         const token = localStorage.getItem("token");
@@ -189,3 +192,138 @@ async function handleCampaignTermination(campaignId) {
         alert("Failed to terminate the campaign.");
     }
 }
+
+
+async function fetchDonorUsers() {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get('/admin/getDonorUsers', { headers: { "Authorization": token } });
+        const donorUsers = response.data.donorUsers;
+
+        const donorUsersSection = document.getElementById('donorUsersSection');
+        const tableBody = donorUsersSection.querySelector('tbody');
+
+        // Clear existing content in tbody
+        tableBody.innerHTML = '';
+
+        if (donorUsers.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="4">No donor users available.</td></tr>';
+            return;
+        }
+
+        donorUsers.forEach((user, index) => {
+            const userRow = `
+                <tr>
+                    <th scope="row">${index + 1}</th>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.phone}</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-delete-user" data-id="${user.id}">Delete</button>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += userRow;
+        });
+
+        document.querySelectorAll('.btn-delete-user').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const userId = event.target.getAttribute('data-id');
+                const confirm = window.confirm("Are you sure?");
+                if (confirm) {
+                    await handleUserTermination(userId);
+
+                } else {
+                    return;
+                }
+            });
+        });
+
+    } catch (error) {
+        console.log("Error fetching donor users:", error);
+        alert("Failed to load donor users.");
+    }
+}
+
+
+
+async function handleUserTermination(userId) {
+    try {
+        const token = localStorage.getItem("token");
+        await axios.delete(`/admin/delete/DonorUser/${userId}`, { headers: { "Authorization": token } });
+        alert("Donor user terminated successfully.");
+        fetchDonorUsers(); // Reload donor users after termination
+    } catch (error) {
+        console.error("Error terminating donor user:", error);
+        alert("Failed to terminate donor user.");
+    }
+}
+
+
+
+async function fetchCharityOrganizations() {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get('/admin/getCharityOrganizations', { headers: { "Authorization": token } });
+        const charityOrganizations = response.data.charityOrganizations;
+
+        const charityOrganizationsSection = document.getElementById('charityOrganizationsSection');
+        const tableBody = charityOrganizationsSection.querySelector('tbody');
+
+        // Clear existing content in tbody
+        tableBody.innerHTML = '';
+
+        if (charityOrganizations.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="7">No charity organizations available.</td></tr>';
+            return;
+        }
+
+        charityOrganizations.forEach((organization, index) => {
+            const organizationRow = `
+                <tr>
+                    <th scope="row">${index + 1}</th>
+                    <td>${organization.name}</td>
+                    <td>${organization.email}</td>
+                    <td>${organization.phone}</td>
+                    <td>${organization.description}</td>
+                    <td>${organization.goal}</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-delete-org" data-id="${organization.id}">Delete</button> 
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += organizationRow;
+        });
+
+        document.querySelectorAll('.btn-delete-org').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const organizationId = event.target.getAttribute('data-id');
+                const confirm = window.confirm("Are you sure?");
+                if (confirm) {
+                    await handleOrganizationTermination(organizationId);
+
+                } else {
+                    return;
+                }
+            });
+        });
+
+    } catch (error) {
+        console.log("Error fetching charity organizations:", error);
+        alert("Failed to load charity organizations.");
+    }
+}
+
+
+async function handleOrganizationTermination(organizationId) {
+    try {
+        const token = localStorage.getItem("token");
+        await axios.delete(`/admin/delete/CharityOrganization/${organizationId}`, { headers: { "Authorization": token } });
+        alert("Charity organization terminated successfully.");
+        fetchCharityOrganizations(); // Reload charity organizations after termination
+    } catch (error) {
+        console.error("Error terminating charity organization:", error);
+        alert("Failed to terminate charity organization.");
+    }
+}
+

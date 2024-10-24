@@ -19,5 +19,13 @@ router.get('/admin/getApprovedCampaigns', authentication.authenticate, adminCont
 
 router.post('/admin/terminateCampaign', authentication.authenticate, adminController.terminateCampaign);
 
+router.get('/admin/getDonorUsers', authentication.authenticate, adminController.getDonorUsers);
+
+router.get('/admin/getCharityOrganizations', authentication.authenticate, adminController.getCharityOrganizations);
+
+router.delete('/admin/delete/DonorUser/:userId', authentication.authenticate, adminController.deleteDonorUser);
+
+router.delete('/admin/delete/CharityOrganization/:organizationId', authentication.authenticate, adminController.deleteOrganization);
+
 
 module.exports = router;
