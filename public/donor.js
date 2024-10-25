@@ -31,8 +31,6 @@ async function fetchCampaigns(category = "", searchQuery = "", page = 1) {
         campaignsList.innerHTML = ''; // Clear existing
 
         if (campaigns.length === 0) {
-            // alert("No campaigns found for the selected category");
-            // window.location.reload();
             campaignsList.innerHTML = '<p>No campaigns found for the selected filters.</p>';
             return;
         }
@@ -56,12 +54,10 @@ async function fetchCampaigns(category = "", searchQuery = "", page = 1) {
             `;
             campaignsList.innerHTML += campaignCard;
 
-            // Attach an event listener for the "Donate Now" button
             const donateButtons = document.querySelectorAll('.donateNowBtn');
             donateButtons.forEach(button => {
                 button.addEventListener('click', function (event) {
                     const campaignId = event.currentTarget.dataset.id;
-                    // Store the campaignId in a global variable or in a hidden input
                     document.getElementById("payBtn").dataset.campaignId = campaignId; // Store it in the pay button
                 });
             });
@@ -80,7 +76,7 @@ async function fetchCampaigns(category = "", searchQuery = "", page = 1) {
 const categoryFilter = document.getElementById('campaignCategoryFilter');
 categoryFilter.addEventListener('change', (event) => {
     const selectedCategory = event.target.value;
-    // Call fetchCampaigns with the selected category
+    // Calling fetchCampaigns with the selected category
     fetchCampaigns(selectedCategory, searchInput.value.trim(), 1);
 });
 
@@ -89,7 +85,7 @@ const searchBtn = document.getElementById('searchBtn');
 const searchInput = document.getElementById('searchCampaign');
 searchBtn.addEventListener('click', () => {
     const searchQuery = searchInput.value.trim();
-    // Call fetchCampaigns with the search query and the current selected category
+    // Calling fetchCampaigns with the search query and the current selected category
     fetchCampaigns(categoryFilter.value, searchQuery, 1);
 });
 

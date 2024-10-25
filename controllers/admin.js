@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const Admin = require('../models/admin.js');
 const DonorUser = require("../models/donorUser.js");
 const Campaign = require("../models/charityCampaign.js");
@@ -7,10 +9,9 @@ const ArchivedCampaign = require("../models/archivedCampaign.js");
 
 const bcrypt = require('bcrypt');
 const AWS = require("aws-sdk");
-
 const jwt = require('jsonwebtoken');
 const { where } = require('sequelize');
-require('dotenv').config();
+
 
 const s3bucket = new AWS.S3({
     accessKeyId: process.env.IAM_USER_ACCESS_KEY,

@@ -12,12 +12,14 @@ const CharityCampaign = require("./models/charityCampaign.js");
 const Donations = require("./models/donations.js");
 const Transactions = require("./models/transactions.js");
 const ArchivedCampaign = require("./models/archivedCampaign.js");
+const ForgotPassword = require("./models/forgotPassword.js");
 
 const donorUserRoutes = require('./routes/donorUser.js');
 const charityOrgUserRoutes = require('./routes/charityOrgUser.js');
 const adminRoutes = require("./routes/admin.js");
 const charityCampaignRoutes = require("./routes/charityCampaign.js");
 const donorRoutes = require("./routes/donors.js");
+const forgotPasswordRoutes = require("./routes/forgotPassword.js");
 
 const app = express();
 
@@ -39,6 +41,7 @@ app.use(charityOrgUserRoutes);
 app.use(adminRoutes);
 app.use(charityCampaignRoutes);
 app.use(donorRoutes);
+app.use(forgotPasswordRoutes);
 
 
 CharityOrgUser.hasMany(CharityCampaign);
@@ -58,6 +61,15 @@ Transactions.belongsTo(DonorUser);
 
 CharityCampaign.hasMany(Transactions);
 Transactions.belongsTo(CharityCampaign);
+
+DonorUser.hasMany(ForgotPassword, { foreignKey: 'donorUserId' });
+ForgotPassword.belongsTo(DonorUser, { foreignKey: 'donorUserId' });
+
+CharityOrgUser.hasMany(ForgotPassword, { foreignKey: 'charityOrgUserId' });
+ForgotPassword.belongsTo(CharityOrgUser, { foreignKey: 'charityOrgUserId' });
+
+Admin.hasMany(ForgotPassword, { foreignKey: 'adminId' });
+ForgotPassword.belongsTo(Admin, { foreignKey: 'adminId' });
 
 
 sequelize.sync().

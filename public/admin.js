@@ -158,7 +158,7 @@ async function fetchApprovedCampaigns() {
 
         sectionContainer.appendChild(rowDiv); // Append the row to the container
 
-        // Add event listeners for "Terminate Campaign" buttons
+        //event listeners for "Terminate Campaign" buttons
         document.querySelectorAll('.btn-outline-danger').forEach(button => {
             button.addEventListener('click', async (event) => {
                 const campaignId = event.target.getAttribute('data-id');

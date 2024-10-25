@@ -42,11 +42,6 @@ donorSignupForm.addEventListener('submit', async (event) => {
                 //hide sign-up modal
                 const donorModal = bootstrap.Modal.getInstance(document.getElementById('donorModal'));
                 donorModal.hide();
-                // // Show sign-in modal
-                // document.getElementById('signupModal').addEventListener('hidden.bs.modal', function () {
-                //     let loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-                //     loginModal.show();
-                // });
 
                 //clearing input fields
                 donorSignupName.value = '';
@@ -138,11 +133,6 @@ orgSignupForm.addEventListener('submit', async (event) => {
                 //hide sign-up modal
                 const orgModal = bootstrap.Modal.getInstance(document.getElementById('orgModal'));
                 orgModal.hide();
-                // // Show sign-in modal
-                // document.getElementById('signupModal').addEventListener('hidden.bs.modal', function () {
-                //     let loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-                //     loginModal.show();
-                // });
 
                 //clearing input fields
                 orgSignupName.value = '';

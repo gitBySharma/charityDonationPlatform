@@ -5,7 +5,6 @@ require('dotenv').config();
 exports.authenticate = async (req, res, next) => {
     try {
         const token = req.header('Authorization');
-        //console.log(token);
         if (token) {
             const user = await jwt.verify(token, process.env.JWT_SECRET);
             await DonorUser.findByPk(user.userId)

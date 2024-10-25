@@ -171,9 +171,9 @@ exports.getDonationDetails = async (req, res, next) => {
         }
 
         const donations = await Donations.findAll({
-            where: { donorUserId: req.user.id }, // Fetch donations for the logged-in user
+            where: { donorUserId: req.user.id },
             include: [{
-                model: Campaign, // Include associated campaign details
+                model: Campaign,
                 attributes: ['campaignName', 'campaignLocation']
             }],
             order: [['createdAt', 'DESC']],
@@ -216,7 +216,6 @@ async function uploadToS3(data, fileName) {
 
     try {
         const response = await s3bucket.upload(params).promise();   //.promise() returns a promise
-        //console.log("Success", response);
         return response.Location;
 
     } catch (error) {
@@ -236,9 +235,9 @@ exports.downloadDonationReport = async (req, res, next) => {
         }
 
         const donations = await Donations.findAll({
-            where: { donorUserId: req.user.id }, // Fetch donations for the logged-in user
+            where: { donorUserId: req.user.id },
             include: [{
-                model: Campaign, // Include associated campaign details
+                model: Campaign,
                 attributes: ['campaignName', 'campaignLocation']
             }],
             order: [['createdAt', 'DESC']]
