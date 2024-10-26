@@ -69,6 +69,11 @@ async function fetchApprovedCampaigns() {
         const campaignsList = document.getElementById('campaignsList');
         campaignsList.innerHTML = ''; // Clear existing campaigns
 
+        if (campaigns.length === 0) {
+            campaignsList.innerHTML = `<p>No approved campaigns available</p>`;
+            return;
+        }
+
         campaigns.forEach(campaign => {
             const campaignCard = `
                 <div class="card mb-3">

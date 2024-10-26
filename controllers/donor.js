@@ -2,6 +2,7 @@
 require('dotenv').config();
 
 const Razorpay = require("razorpay");
+const brevo = require('sib-api-v3-sdk');
 
 const Campaign = require("../models/charityCampaign.js");
 const DonorUser = require("../models/donorUser.js");
@@ -9,6 +10,10 @@ const Donations = require("../models/donations.js");
 const Transactions = require("../models/transactions.js");
 
 const Sequelize = require('sequelize');
+
+const defaultClient = brevo.ApiClient.instance;
+const ApiKeyAuth = defaultClient.authentications['api-key'];
+ApiKeyAuth.apiKey = process.env.FORGOT_PASSWORD_API_KEY;
 
 
 exports.getCampaigns = async (req, res, next) => {
@@ -125,6 +130,88 @@ exports.updateTransactionStatus = async (req, res, next) => {
                     const currentFundRaised = campaign.fundRaised || 0; // default to 0 if null
                     await campaign.update({ fundRaised: currentFundRaised + parseInt(donationAmount, 10) });
                 }
+
+                //send donation confirmation mail
+                const apiInstance = new brevo.TransactionalEmailsApi();
+                const sender = {
+                    email: "subhankarsharma24@gmail.com",
+                    name: "Charity Connect Support",
+                };
+
+                const donor = await DonorUser.findOne({ where: { id: req.user.id } });
+                const receiver = [{ email: donor.email }];
+
+                const emailHtmlContent = `
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Donation Confirmation</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                background-color: #f9f9f9;
+                                margin: 0;
+                                padding: 20px;
+                            }
+                            .container {
+                                background-color: #ffffff;
+                                border-radius: 8px;
+                                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                                padding: 20px;
+                                max-width: 600px;
+                                margin: auto;
+                            }
+                            h1 {
+                                color: #2d465e;
+                            }
+                            p {
+                                font-size: 16px;
+                                color: #333333;
+                            }
+                            .highlight {
+                                color: #5777ba;
+                                font-weight: bold;
+                            }
+                            .footer {
+                                margin-top: 20px;
+                                font-size: 14px;
+                                color: #777777;
+                            }
+                            .button {
+                                display: inline-block;
+                                padding: 10px 15px;
+                                margin-top: 10px;
+                                color: #5777ba;
+                                text-decoration: none;
+                                border: 2px solid #5777ba;
+                                border-radius: 5px;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <h1>Donation Successful!</h1>
+                            <p>Thank you <span class="highlight">${donor.name}</span> for your generous donation of <span class="highlight">₹${donationAmount}</span> towards <span class="highlight">${campaign.campaignName}</span>.</p>
+                            <p>Your payment ID is: <span class="highlight">${payment_id}</span></p>
+                            <p>Your support makes a difference. Thank you for being a part of the CharityConnect community!</p>
+                            <p>For any questions, feel free to contact us.</p>
+                            <div class="footer">
+                                <p>Warm regards,</p>
+                                <p>The CharityConnect Team</p>
+                                <a href="${process.env.WEBSITE}" class="button">Visit Our Website</a>
+                            </div>
+                        </div>
+                    </body>
+                    </html>`;
+
+                await apiInstance.sendTransacEmail({
+                    sender,
+                    to: receiver,
+                    subject: "Donation Confirmation",
+                    htmlContent: emailHtmlContent
+                });
 
                 return res.status(201).json({ success: true, message: "Transaction successful" });
 

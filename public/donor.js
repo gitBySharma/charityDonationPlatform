@@ -145,7 +145,7 @@ document.getElementById('payBtn').addEventListener('click', async (event) => {
 
             //updating local storage with premium status
             if (response.razorpay_payment_id) {
-                alert("Donation successful");
+                alert("Donation successful, confirmation sent to your email");
                 document.getElementById("donationAmount").value = "";
                 window.location.reload();
             }
